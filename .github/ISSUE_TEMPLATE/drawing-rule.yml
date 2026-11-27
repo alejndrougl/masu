@@ -1,0 +1,20 @@
+name: Drawing or painting rule / Regla de dibujo o pintura
+description: A rule Masu gets wrong or is missing (proportions, line weight, light, color…).
+labels: [rule]
+body:
+  - type: textarea
+    id: rule
+    attributes:
+      label: The rule / La regla
+      description: State it so it could be measured (for example "the contour is heavier on the shadow side").
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source / Fuente
+      placeholder: Loomis, "Figure Drawing for All It's Worth", p. 30 · my own teaching…
+  - type: textarea
+    id: example
+    attributes:
+      label: Example / Ejemplo

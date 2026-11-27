@@ -1,0 +1,34 @@
+name: Bad reading / Lectura equivocada
+description: Masu read or drew something the way a draftsman or painter would not.
+labels: [reading]
+body:
+  - type: input
+    id: mode
+    attributes:
+      label: Mode and step / Modo y paso
+      placeholder: Construction, step 4 · Light · Perspective…
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What Masu did / Qué hizo Masu
+      description: Paste a screenshot. A quick sketch on top showing what is wrong helps a lot.
+    validations:
+      required: true
+  - type: textarea
+    id: should
+    attributes:
+      label: What a teacher would do / Qué haría un maestro
+      description: How should it be read or built? Cite a book or course if the rule comes from one.
+    validations:
+      required: true
+  - type: textarea
+    id: image
+    attributes:
+      label: Reference image / Imagen de referencia
+      description: Only images you may share (your own, public domain or CC0). Do not upload photos of people without their consent.
+  - type: input
+    id: env
+    attributes:
+      label: Browser and OS / Navegador y sistema

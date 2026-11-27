@@ -1,0 +1,25 @@
+name: Bug / Error
+description: Something breaks, does not load, or the interface misbehaves.
+labels: [bug]
+body:
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps / Pasos
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual / Qué esperabas y qué pasó
+    validations:
+      required: true
+  - type: textarea
+    id: console
+    attributes:
+      label: Console errors / Errores de la consola
+      render: text
+  - type: input
+    id: env
+    attributes:
+      label: Browser, OS, GPU / Navegador, sistema, GPU

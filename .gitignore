@@ -1,0 +1,22 @@
+# Dependencias y compilación
+node_modules/
+dist/
+
+# Modelos y motores: los baja `npm run setup` (cerca de 1 GB)
+public/models/
+public/wasm/
+
+# Material de trabajo local: nunca va al repositorio
+respaldos/
+ejemplos/
+dev/*/
+dev/*.png
+dev/*.md
+!dev/README.md
+.council-tmp/
+.impeccable/
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db
