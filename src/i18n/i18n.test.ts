@@ -29,6 +29,12 @@ describe('diccionarios', () => {
     const inEn = new Map(enLeaves as [string, string][]);
     for (const [k, v] of esLeaves as [string, string][]) expect(vars(inEn.get(k)!), k).toEqual(vars(v));
   });
+
+  it('cada {variable|singular|plural} usa una variable que la misma cadena muestra', () => {
+    for (const [k, v] of [...esLeaves, ...enLeaves] as [string, string][]) {
+      for (const m of v.matchAll(/\{(\w+)\|/g)) expect(vars(v), k).toContain(m[1]);
+    }
+  });
 });
 
 describe('detectLocale', () => {
@@ -81,5 +87,38 @@ describe('t y variables', () => {
     setLocale('es');
     expect(t('store.lienzo')).toBe('Lienzo');
     expect(tr('Siena tostada')).toBe('Siena tostada');
+  });
+});
+
+describe('plurales', () => {
+  afterEach(() => setLocale('es'));
+
+  it('{variable|singular|plural} elige la forma según el número', () => {
+    const s = '{n} {n|cuadro|cuadros}';
+    expect(format(s, { n: 1 }, 'es')).toBe('1 cuadro');
+    expect(format(s, { n: 0 }, 'es')).toBe('0 cuadros');
+    expect(format(s, { n: 2 }, 'es')).toBe('2 cuadros');
+    expect(format(s, { n: 1.5 }, 'es')).toBe('1.5 cuadros');
+    expect(format('{n} {n|square|squares}', { n: 1 }, 'en')).toBe('1 square');
+    expect(format('{n} {n|square|squares}', { n: 0 }, 'en')).toBe('0 squares');
+    // Sin la variable, el texto queda igual.
+    expect(format('{n|a|b}', {}, 'en')).toBe('{n|a|b}');
+  });
+
+  it('ya no dice "1 squares" ni "1 heads"', () => {
+    setLocale('en');
+    expect(t('app.cuadros', { length: 1 })).toBe('1 square');
+    expect(t('app.cuadros', { length: 4 })).toBe('4 squares');
+    expect(t('pintar.n_de_m_cuadros', { done: 0, total: 1 })).toBe('0 of 1 square');
+    expect(t('pintar.n_de_m_cuadros', { done: 1, total: 12 })).toBe('1 of 12 squares');
+    expect(t('construccion.n_cabezas', { n: 1 })).toBe('1 head');
+    expect(t('construccion.n_cabezas', { n: 2.5 })).toBe('2.5 heads');
+    setLocale('es');
+    expect(t('app.cuadros', { length: 1 })).toBe('1 cuadro');
+    expect(t('app.cuadros', { length: 4 })).toBe('4 cuadros');
+    expect(t('pintar.n_de_m_cuadros', { done: 1, total: 1 })).toBe('1 de 1 cuadro');
+    expect(t('construccion.n_cabezas', { n: 1 })).toBe('1 cabeza');
+    expect(t('panels.n_de_m_pintados', { done: 1, total: 1 })).toBe('1 de 1 pintado.');
+    expect(t('panels.n_de_m_pintados', { done: 2, total: 9 })).toBe('2 de 9 pintados.');
   });
 });
