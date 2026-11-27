@@ -29,7 +29,7 @@ npm test
 
 All visible text is in `src/i18n/`:
 
-1. Copy `src/i18n/en.ts` to `src/i18n/<code>.ts` (for example `pt.ts`) and translate the values, not the keys. Keep `{placeholders}` as they are.
+1. Copy `src/i18n/en.ts` to `src/i18n/<code>.ts` (for example `pt.ts`) and translate the values, not the keys. Keep `{placeholders}` as they are. For a word that changes with a number, write `{n|singular|plural}` (for example `'{n} {n|square|squares}'`): the form is picked with the language's plural rules.
 2. Register the language in `src/i18n/index.ts` (the `Locale` type, the dictionary map and the browser-language detection).
 3. Run `npx tsc --noEmit -p .`: it fails if a key is missing.
 4. Open the app, switch the language and check that nothing overflows its panel.
