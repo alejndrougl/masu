@@ -63,19 +63,40 @@ export const subscribeLocale = (fn: () => void) => {
   return () => void listeners.delete(fn);
 };
 
-/** Sustituye {nombre} por su valor. */
-export function format(s: string, vars?: Vars): string {
-  return vars ? s.replace(/\{(\w+)\}/g, (m, k: string) => (k in vars ? String(vars[k]) : m)) : s;
+const pluralRules = new Map<Locale, Intl.PluralRules>();
+
+/** Categoría de plural de n en el idioma: 'one' o 'other' en español e inglés. */
+export function pluralCategory(n: number, locale: Locale = current): Intl.LDMLPluralRule {
+  let rules = pluralRules.get(locale);
+  if (!rules) pluralRules.set(locale, (rules = new Intl.PluralRules(locale)));
+  return rules.select(n);
+}
+
+/**
+ * Sustituye {nombre} por su valor y {nombre|singular|plural} por la forma que pide ese número
+ * en el idioma: "{n} {n|cuadro|cuadros}" da "1 cuadro" y "3 cuadros".
+ */
+export function format(s: string, vars?: Vars, locale: Locale = current): string {
+  if (!vars) return s;
+  return s
+    .replace(/\{(\w+)\|([^{}|]*)\|([^{}|]*)\}/g, (m, k: string, one: string, other: string) => {
+      if (!(k in vars)) return m;
+      const n = Number(vars[k]);
+      return Number.isFinite(n) && pluralCategory(n, locale) === 'one' ? one : other;
+    })
+    .replace(/\{(\w+)\}/g, (m, k: string) => (k in vars ? String(vars[k]) : m));
 }
 
 /** Texto de la clave en el idioma actual; si falta en inglés, cae al español. */
 export function t(key: Key, vars?: Vars): string {
-  return format(flat[current][key] ?? flat.es[key] ?? key, vars);
+  return tDyn(key, vars);
 }
 
 /** Texto de una clave que se arma en tiempo de ejecución (por ejemplo, por id). */
 export function tDyn(key: string, vars?: Vars, fallback?: string): string {
-  return format(flat[current][key] ?? flat.es[key] ?? fallback ?? key, vars);
+  const own = flat[current][key];
+  // Si cae al español, el plural se elige con las reglas del español.
+  return own !== undefined ? format(own, vars) : format(flat.es[key] ?? fallback ?? key, vars, 'es');
 }
 
 /** Hook: devuelve t y vuelve a dibujar el componente cuando cambia el idioma. */
